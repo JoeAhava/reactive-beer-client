@@ -13,8 +13,8 @@ public interface BeerApiClient {
     Mono<Beer> getBeerById(UUID id, Boolean showInventoryOnHand);
     Mono<Beer> getBeerByUPC(String upc);
     Mono<ResponseEntity> deleteBeer(UUID id);
-    Mono<ResponseEntity> createBeer(Beer beer);
-    Mono<ResponseEntity> updateBeer(Beer request);
+    Mono<ResponseEntity<Void>> createBeer(Beer beer);
+    Mono<ResponseEntity<Void>> updateBeer(UUID beerId, Beer request);
 }
 
 /*

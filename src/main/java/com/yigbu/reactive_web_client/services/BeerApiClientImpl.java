@@ -6,6 +6,7 @@ import com.yigbu.reactive_web_client.dao.ListBeerResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
@@ -36,12 +37,27 @@ public class BeerApiClientImpl implements BeerApiClient {
 
     @Override
     public Mono<Beer> getBeerById(UUID id, Boolean showInventoryOnHand) {
-        return null;
+        return webClient
+                .get()
+                .uri(uriBuilder -> uriBuilder
+                        .path(WebClientProperties.BEER_PATH_V1_GET_BY_ID)
+                        .queryParamIfPresent("showInventoryOnHand", Optional.ofNullable(showInventoryOnHand))
+                        .build(id)
+                )
+                .retrieve()
+                .bodyToMono(Beer.class);
     }
 
     @Override
     public Mono<Beer> getBeerByUPC(String upc) {
-        return null;
+        return webClient
+                .get()
+                .uri(uriBuilder -> uriBuilder
+                        .path(WebClientProperties.BEER_PATH_V1_UPC)
+                        .build(upc)
+                )
+                .retrieve()
+                .bodyToMono(Beer.class);
     }
 
     @Override
@@ -50,12 +66,22 @@ public class BeerApiClientImpl implements BeerApiClient {
     }
 
     @Override
-    public Mono<ResponseEntity> createBeer(Beer beer) {
-        return null;
+    public Mono<ResponseEntity<Void>> createBeer(Beer beer) {
+        return webClient
+                .post()
+                .uri(uriBuilder -> uriBuilder.path(WebClientProperties.BEER_PATH_V1).build())
+                .body(BodyInserters.fromValue(beer))
+                .retrieve()
+                .toBodilessEntity();
     }
 
     @Override
-    public Mono<ResponseEntity> updateBeer(Beer beer) {
-        return null;
+    public Mono<ResponseEntity<Void>> updateBeer(UUID id, Beer beer) {
+        return webClient
+                .put()
+                .uri(uriBuilder -> uriBuilder.path(WebClientProperties.BEER_PATH_V1_GET_BY_ID).build(id))
+                .body(BodyInserters.fromValue(beer))
+                .retrieve()
+                .toBodilessEntity();
     }
 }
